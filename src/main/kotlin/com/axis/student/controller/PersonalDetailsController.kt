@@ -1,6 +1,7 @@
 package com.axis.student.controller
 
 import com.axis.student.entity.PersonalDetails
+import com.axis.student.kafka.StudentProducer
 import com.axis.student.repo.PersonalDetailsRepository
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +14,8 @@ import reactor.core.publisher.Mono
 @RequestMapping("/details")
 class PersonalDetailsController (
     @Autowired
-    val personalRepository: PersonalDetailsRepository
+    private val personalRepository: PersonalDetailsRepository,
+    private val studentProducer: StudentProducer
 
     ){
 
@@ -31,7 +33,19 @@ class PersonalDetailsController (
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     fun addDetails(@RequestBody personalDetails: PersonalDetails) :Mono<PersonalDetails>{
+        studentProducer.registerDetails(personalDetails)
         return personalRepository.save(personalDetails)
+    }
+
+    @PutMapping("/{id}")
+    fun updateDetails(@PathVariable id: String, @RequestBody personalDetails: PersonalDetails) : Mono<PersonalDetails>{
+        return personalRepository.save(personalDetails)
+
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteDetails(@PathVariable id: String) : Mono<Void>{
+        return personalRepository.deleteById(id);
     }
 
 

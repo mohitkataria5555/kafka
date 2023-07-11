@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("students")
-class PersonalDetails(
+data class PersonalDetails(
     val id: Int,
     val name: String,
     val branch: String,
